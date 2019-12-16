@@ -163,10 +163,20 @@ func (h *HTTP) Run() error {
 		if err != nil {
 			return err
 		}
-
-		l = tls.NewListener(l, &tls.Config{
-			Certificates: []tls.Certificate{cert},
-		})
+		config := tls.Config{    
+    		  	Certificates: []tls.Certificate{cert},
+    		  	MinVersion:  tls.VersionTLS12,   
+				}
+		config.CipherSuites = []uint16{
+          		tls.TLS_RSA_WITH_AES_256_CBC_SHA,
+          		tls.TLS_RSA_WITH_AES_128_CBC_SHA,
+          		tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+          		tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+          		tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+          		tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+          		tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+          		tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256}
+		l = tls.NewListener(l, &config)
 	}
 
 	h.l = l
